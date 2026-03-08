@@ -7,6 +7,8 @@ import com.innowise.user_service.exception.ResourceNotFoundException;
 import com.innowise.user_service.repository.PaymentCardRepository;
 import com.innowise.user_service.repository.specification.AppSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PaymentCardService {
+
     private final PaymentCardRepository cardRepository;
     private final UserService userService;
+    private final CacheManager cacheManager;
 
+    @CacheEvict(value = "users", key = "#userId")
     @Transactional
     public PaymentCard createCard(Long userId, PaymentCard card) {
         long currentCardCount = cardRepository.countByUserId(userId);
@@ -32,10 +37,41 @@ public class PaymentCardService {
         return cardRepository.save(card);
     }
 
+    @Transactional
+    public PaymentCard updateCard(Long id, PaymentCard updatedData) {
+        PaymentCard existingCard = getCardById(id);
+        existingCard.setHolder(updatedData.getHolder());
+        existingCard.setExpirationDate(updatedData.getExpirationDate());
+
+        PaymentCard savedCard = cardRepository.save(existingCard);
+        evictUserCache(savedCard.getUser().getId());
+        return savedCard;
+    }
+
+    @Transactional
+    public void changeCardStatus(Long id, boolean active) {
+        PaymentCard card = getCardById(id);
+        cardRepository.updateActiveStatusJpql(id, active);
+        evictUserCache(card.getUser().getId());
+    }
+
+    @Transactional
+    public void deleteCard(Long id) {
+        PaymentCard card = getCardById(id);
+        cardRepository.deleteById(id);
+        evictUserCache(card.getUser().getId());
+    }
+
     @Transactional(readOnly = true)
     public PaymentCard getCardById(Long id) {
         return cardRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Card not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Card not found"));
+    }
+
+    private void evictUserCache(Long userId) {
+        if (cacheManager.getCache("users") != null) {
+            cacheManager.getCache("users").evict(userId);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -46,23 +82,5 @@ public class PaymentCardService {
     @Transactional(readOnly = true)
     public List<PaymentCard> getCardsByUserId(Long userId) {
         return cardRepository.findAllByUserId(userId);
-    }
-
-    @Transactional
-    public PaymentCard updateCard(Long id, PaymentCard updatedData) {
-        PaymentCard existingCard = getCardById(id);
-        existingCard.setHolder(updatedData.getHolder());
-        existingCard.setExpirationDate(updatedData.getExpirationDate());
-        return cardRepository.save(existingCard);
-    }
-
-    @Transactional
-    public void changeCardStatus(Long id, boolean active) {
-        cardRepository.updateActiveStatusJpql(id, active);
-    }
-
-    @Transactional
-    public void deleteCard(Long id) {
-        cardRepository.deleteById(id);
     }
 }
