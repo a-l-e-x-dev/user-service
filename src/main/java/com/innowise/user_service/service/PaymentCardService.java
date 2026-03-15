@@ -5,7 +5,9 @@ import com.innowise.user_service.entity.User;
 import com.innowise.user_service.exception.BusinessValidationException;
 import com.innowise.user_service.exception.ResourceNotFoundException;
 import com.innowise.user_service.repository.PaymentCardRepository;
+import com.innowise.user_service.repository.UserRepository;
 import com.innowise.user_service.repository.specification.AppSpecifications;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,16 +25,19 @@ public class PaymentCardService {
     private final PaymentCardRepository cardRepository;
     private final UserService userService;
     private final CacheManager cacheManager;
+    private final UserRepository userRepository;
 
     @CacheEvict(value = "users", key = "#userId")
     @Transactional
     public PaymentCard createCard(Long userId, PaymentCard card) {
+        User user = userRepository.findByIdForUpdate(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
         long currentCardCount = cardRepository.countByUserId(userId);
         if (currentCardCount >= 5) {
-            throw new BusinessValidationException("User already has the maximum of 5 cards allowed.");
+            throw new IllegalStateException("User already has maximum number of cards (5)");
         }
 
-        User user = userService.getUserById(userId);
         card.setUser(user);
         return cardRepository.save(card);
     }
