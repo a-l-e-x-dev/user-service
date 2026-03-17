@@ -29,7 +29,7 @@
     <properties>
         <java.version>21</java.version>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.organization>a-l-e-x-dev</sonar.organization>
+        <sonar.organization>token2</sonar.organization>
         <sonar.projectKey>73675b0827476ff2a0563e33c9cb4dfc077f85c2</sonar.projectKey>
     </properties>
     <dependencies>
