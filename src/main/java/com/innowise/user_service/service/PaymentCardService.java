@@ -35,7 +35,7 @@ public class PaymentCardService {
 
         long currentCardCount = cardRepository.countByUserId(userId);
         if (currentCardCount >= 5) {
-            throw new IllegalStateException("User already has maximum number of cards (5)");
+            throw new BusinessValidationException("User already has maximum number of cards (5)");
         }
 
         card.setUser(user);

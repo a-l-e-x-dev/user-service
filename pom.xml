@@ -28,6 +28,9 @@
     </scm>
     <properties>
         <java.version>21</java.version>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>a-l-e-x-dev</sonar.organization>
+        <sonar.projectKey>a-l-e-x-dev</sonar.projectKey>
     </properties>
     <dependencies>
         <dependency>
@@ -142,6 +145,7 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
+
     </dependencies>
 
     <build>

@@ -33,11 +33,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
         if: env.SONAR_TOKEN != '' && env.SONAR_HOST_URL != ''
-        run: >
-          mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar 
-          -Dsonar.projectKey=user-service 
-          -Dsonar.host.url=$SONAR_HOST_URL 
-          -Dsonar.login=$SONAR_TOKEN
+        run: mvn -B verify
 
       - name: Build Docker Image
         run: docker build -t user-service-app:${{ github.sha }} .
