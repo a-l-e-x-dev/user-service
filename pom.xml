@@ -31,8 +31,6 @@
         <sonar.organization>a-l-e-x-dev</sonar.organization>
         <sonar.projectKey>a-l-e-x-dev</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.token>0f200f42f95d64375ba36302f8c6edf7a7bdfc51</sonar.token>
-
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
     <dependencies>
