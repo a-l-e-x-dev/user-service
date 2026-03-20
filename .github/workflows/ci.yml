@@ -24,8 +24,10 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Build and Test
-        run: mvn clean package
+      - name: SonarQube Analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: SonarQube Analysis
         env:
