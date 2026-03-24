@@ -1,7 +1,6 @@
 package com.innowise.user_service;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -32,6 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String header = request.getHeader("Authorization");
+
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
             try {
@@ -41,17 +41,30 @@ public class JwtFilter extends OncePerRequestFilter {
                         .parseClaimsJws(token)
                         .getBody();
 
-                Long userId = claims.get("userId", Long.class);
+                Object userIdObj = claims.get("userId");
+                Long userId = userIdObj != null ? Long.valueOf(userIdObj.toString()) : null;
+
                 String role = claims.get("role", String.class);
+                if (role == null || role.isBlank()) {
+                    role = "USER";
+                }
+
+                if (!role.startsWith("ROLE_")) {
+                    role = "ROLE_" + role;
+                }
 
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         userId, null, List.of(new SimpleGrantedAuthority(role))
                 );
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            } catch (JwtException e) {
+
+            } catch (Exception e) {
+                System.err.println("authorization error");
+                e.printStackTrace();
                 SecurityContextHolder.clearContext();
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }
