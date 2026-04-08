@@ -42,7 +42,6 @@ public class PaymentCardController {
         Long userId = (Long) authentication.getPrincipal();
         PaymentCard card = cardService.getCardById(cardId);
 
-        // Защита: проверяем, что карта действительно принадлежит этому пользователю
         if (!card.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("You do not have permission to delete this card");
         }

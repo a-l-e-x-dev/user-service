@@ -1,5 +1,6 @@
 package com.innowise.user_service.controller;
 
+import com.innowise.user_service.dto.UserDto;
 import com.innowise.user_service.entity.User;
 import com.innowise.user_service.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
@@ -72,4 +76,13 @@ public class UserController {
         userService.changeUserStatus(id, active);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/bulk")
+    public ResponseEntity<List<UserDto>> getUsersByIds(@RequestBody Set<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return ResponseEntity.ok(List.of());
+        }
+        return ResponseEntity.ok(userService.getUsersByIds(ids));
+    }
+
 }
