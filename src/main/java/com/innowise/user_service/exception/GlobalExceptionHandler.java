@@ -56,7 +56,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleAllExceptions(Exception ex) {
-        System.err.println("=== ПРОИЗОШЛА ОШИБКА В USER SERVICE ===");
         ex.printStackTrace();
 
         Map<String, String> response = new HashMap<>();

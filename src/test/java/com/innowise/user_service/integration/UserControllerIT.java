@@ -121,15 +121,15 @@ class UserControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateDto)))
                 .andDo(print())
-                .andExpect(status().isOk()) // Ожидаем 200 OK
-                .andExpect(jsonPath("$.name").value("Jane")); // Проверяем, что имя обновилось
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Jane"));
     }
 
     @Test
     void shouldReturn401WhenRequestWithoutToken() throws Exception {
         mockMvc.perform(get("/api/users/me"))
                 .andDo(print())
-                .andExpect(status().isUnauthorized()); // Ожидаем 401
+                .andExpect(status().isUnauthorized());
     }
 
     @Test

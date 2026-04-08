@@ -47,7 +47,6 @@ class PaymentCardServiceTest {
 
     @Test
     void createCard_Success_WhenUserHasLessThan5Cards() {
-        // Arrange
         Long userId = 1L;
         when(userRepository.findByIdForUpdate(userId)).thenReturn(Optional.of(mockUser));
         when(paymentCardRepository.countByUserId(userId)).thenReturn(4L);
@@ -57,10 +56,8 @@ class PaymentCardServiceTest {
             return card;
         });
 
-        // Act
         PaymentCard createdCard = paymentCardService.createCard(userId, mockDto);
 
-        // Assert
         assertNotNull(createdCard);
         assertEquals(mockUser, createdCard.getUser());
         assertEquals("1234567812345678", createdCard.getNumber());
@@ -70,13 +67,11 @@ class PaymentCardServiceTest {
 
     @Test
     void createCard_ThrowsException_WhenUserHas5Cards() {
-        // Arrange
         Long userId = 1L;
         when(userRepository.findByIdForUpdate(userId)).thenReturn(Optional.of(mockUser));
 
         when(paymentCardRepository.countByUserId(userId)).thenReturn(5L);
 
-        // Act & Assert
         BusinessValidationException exception = assertThrows(BusinessValidationException.class, () -> {
             paymentCardService.createCard(userId, mockDto);
         });
@@ -88,11 +83,9 @@ class PaymentCardServiceTest {
 
     @Test
     void createCard_ThrowsException_WhenUserNotFound() {
-        // Arrange
         Long userId = 999L;
         when(userRepository.findByIdForUpdate(userId)).thenReturn(Optional.empty());
 
-        // Act & Assert
         assertThrows(EntityNotFoundException.class, () -> {
             paymentCardService.createCard(userId, mockDto);
         });

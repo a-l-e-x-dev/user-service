@@ -21,7 +21,6 @@ public class PaymentCardController {
 
     private final PaymentCardService cardService;
 
-    //user endpoints
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<List<PaymentCard>> getMyCards(Authentication authentication) {
@@ -42,7 +41,6 @@ public class PaymentCardController {
         Long userId = (Long) authentication.getPrincipal();
         PaymentCard card = cardService.getCardById(cardId);
 
-        // Защита: проверяем, что карта действительно принадлежит этому пользователю
         if (!card.getUser().getId().equals(userId)) {
             throw new AccessDeniedException("You do not have permission to delete this card");
         }
@@ -51,7 +49,6 @@ public class PaymentCardController {
         return ResponseEntity.noContent().build();
     }
 
-    //admin endpoints
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<PaymentCard>> getAllCards(
