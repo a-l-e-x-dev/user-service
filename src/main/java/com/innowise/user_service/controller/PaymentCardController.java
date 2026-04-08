@@ -21,7 +21,6 @@ public class PaymentCardController {
 
     private final PaymentCardService cardService;
 
-    //user endpoints
     @GetMapping("/my")
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<List<PaymentCard>> getMyCards(Authentication authentication) {
@@ -50,7 +49,6 @@ public class PaymentCardController {
         return ResponseEntity.noContent().build();
     }
 
-    //admin endpoints
     @GetMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<PaymentCard>> getAllCards(

@@ -73,7 +73,7 @@ class PaymentCardControllerIT {
         user.setEmail("john.doe@example.com");
         user.setBirthDate(LocalDate.of(1990, 1, 1));
 
-        testUser = userRepository.save(user); // Теперь БД радостно сохранит юзера!
+        testUser = userRepository.save(user);
     }
 
     @AfterEach
@@ -94,7 +94,7 @@ class PaymentCardControllerIT {
                 .claim("role", "ROLE_USER")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
-                .signWith(key, SignatureAlgorithm.HS256) // Используем правильный ключ
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return "Bearer " + token;
@@ -105,7 +105,7 @@ class PaymentCardControllerIT {
         PaymentCardDto dto = new PaymentCardDto();
         dto.setNumber("1234567812345678");
         dto.setHolder("JOHN DOE");
-        dto.setExpirationDate(LocalDate.of(2030, 01, 01)); // (Используй правильный тип данных, например LocalDate)
+        dto.setExpirationDate(LocalDate.of(2030, 01, 01));
         dto.setActive(true);
 
         String token = generateTestToken(testUser.getId());
