@@ -16,11 +16,16 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping("/profile")
+    public ResponseEntity<User> createProfile(@RequestBody User user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
+    }
 
     @GetMapping("/me")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
@@ -84,5 +89,4 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.getUsersByIds(ids));
     }
-
 }
